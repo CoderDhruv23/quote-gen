@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
+// hydration-safe page
 export default function Page() {
   const [topic, setTopic] = useState("");
   const [quote, setQuote] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false); // 👈 hydration guard
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const getQuote = async () => {
     setLoading(true);
@@ -21,6 +27,8 @@ export default function Page() {
     }
     setLoading(false);
   };
+
+  if (!mounted) return null; // 👈 prevents hydration mismatch
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-black via-gray-900 to-blue-900 p-6">
